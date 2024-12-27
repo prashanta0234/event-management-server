@@ -8,12 +8,14 @@ import { LoginDto, RegisterAttendeeDto } from './dto';
 
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { ConfirmEmailQueueService } from 'src/queue/confimEmailQueue.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private jwtService: JwtService,
+    private confirmEmailService: ConfirmEmailQueueService,
   ) {}
   async RegistrationAttendee(
     data: RegisterAttendeeDto,
@@ -28,17 +30,27 @@ export class AuthService {
     }
 
     const hash = await this.hashedPass(data.password);
-    const user = await this.prisma.attendee.create({
-      data: { name: data.name, email: data.email, password: hash },
+    const otp = Math.floor(100000 + Math.random() * 900000);
+
+    await this.prisma.attendee.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        password: hash,
+        activationToken: otp.toString(),
+      },
     });
 
     const token = await this.generateToken({
       email: data.email,
-      name: data.name,
       role: 'USER',
     });
 
-    console.log(user);
+    this.confirmEmailService.addJob({
+      to: data.email,
+      confirmationLink: `http://localhost:5000/auth/confirm?token=${otp}`,
+    });
+
     return { accessToken: token };
   }
 
@@ -52,13 +64,18 @@ export class AuthService {
       throw new NotFoundException('Sorry your email not registerd!');
     }
 
+    if (!isExists.isActivate) {
+      throw new BadRequestException(
+        'Sorry your account not active. Please check email and active your account.',
+      );
+    }
+
     if (!bcrypt.compare(data.password, isExists.password)) {
       throw new BadRequestException('Sorry your password not matched');
     }
 
     const token = await this.generateToken({
       email: data.email,
-      name: isExists.name,
       role: 'USER',
     });
 
@@ -80,7 +97,6 @@ export class AuthService {
     }
     const token = await this.generateToken({
       email: data.email,
-      name: isExists.name,
       role: 'USER',
     });
     return { accessToken: token };
@@ -93,17 +109,43 @@ export class AuthService {
   }
 
   async generateToken({
-    name,
     email,
     role,
   }: {
-    name: string;
     email: string;
     role: string;
   }): Promise<string> {
-    const payload = { sub: email, username: name, role: role };
+    const payload = { sub: email, role: role };
 
     const token = await this.jwtService.signAsync(payload);
     return token;
+  }
+
+  async validateOtp(email: string, otp: string): Promise<string> {
+    const user = await this.prisma.attendee.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found!');
+    }
+
+    if (user.activationToken !== otp) {
+      throw new BadRequestException('Invalid OTP!');
+    }
+
+    await this.prisma.attendee.update({
+      where: {
+        email: email,
+      },
+      data: {
+        activationToken: '',
+        isActivate: true,
+      },
+    });
+
+    return 'Account activated. Please log in.';
   }
 }
