@@ -1,14 +1,14 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
-import { RegisterAttendeeDto } from './dto';
+import { LoginAttendeeDto, RegisterAttendeeDto } from './dto';
 import { ApiResponseShape } from 'src/common/dto/apiResponse.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
+  @Post('signup')
   @ApiCreatedResponse({ type: ApiResponseShape })
   @ApiOperation({
     description: 'Create Attendee',
@@ -17,5 +17,16 @@ export class AuthController {
     @Body() data: RegisterAttendeeDto,
   ): Promise<{ accessToken: string }> {
     return await this.authService.RegistrationAttendee(data);
+  }
+
+  @Post('login')
+  @ApiCreatedResponse({ type: ApiResponseShape })
+  @ApiOperation({
+    description: 'Create Attendee',
+  })
+  async loginAttendee(
+    @Body() data: LoginAttendeeDto,
+  ): Promise<{ accessToken: string }> {
+    return await this.authService.LoginAttendee(data);
   }
 }
