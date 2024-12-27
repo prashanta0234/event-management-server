@@ -6,8 +6,8 @@ import { ApiTags } from '@nestjs/swagger';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @ApiTags("health")
-  @Get("/health")
+  @ApiTags('health')
+  @Get('/health')
   getHello(): string {
     return this.appService.getHealth();
   }
