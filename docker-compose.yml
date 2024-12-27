@@ -18,8 +18,10 @@ services:
     image: adminer
     restart: on-failure
     ports:
-      - 8050:8050
-      
+      - 8080:8080
+    networks:
+      - event-server
+
   event-redis:
     image: redis
     restart: on-failure
