@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
-import { LoginAttendeeDto, RegisterAttendeeDto } from './dto';
+import { LoginDto, RegisterAttendeeDto } from './dto';
 
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -35,22 +35,21 @@ export class AuthService {
     const token = await this.generateToken({
       email: data.email,
       name: data.name,
+      role: 'USER',
     });
 
     console.log(user);
     return { accessToken: token };
   }
 
-  async LoginAttendee(
-    data: LoginAttendeeDto,
-  ): Promise<{ accessToken: string }> {
+  async LoginAttendee(data: LoginDto): Promise<{ accessToken: string }> {
     const isExists = await this.prisma.attendee.findUnique({
       where: {
         email: data.email,
       },
     });
     if (!isExists) {
-      throw new NotFoundException('Sorry you already registred!');
+      throw new NotFoundException('Sorry your email not registerd!');
     }
 
     if (!bcrypt.compare(data.password, isExists.password)) {
@@ -60,8 +59,30 @@ export class AuthService {
     const token = await this.generateToken({
       email: data.email,
       name: isExists.name,
+      role: 'USER',
     });
 
+    return { accessToken: token };
+  }
+
+  async adminLogin(data: LoginDto): Promise<{ accessToken: string }> {
+    const isExists = await this.prisma.admin.findUnique({
+      where: {
+        email: data.email,
+      },
+    });
+    if (!isExists) {
+      throw new NotFoundException('Sorry your email not registerd!');
+    }
+
+    if (!bcrypt.compare(data.password, isExists.password)) {
+      throw new BadRequestException('Sorry your password not matched');
+    }
+    const token = await this.generateToken({
+      email: data.email,
+      name: isExists.name,
+      role: 'USER',
+    });
     return { accessToken: token };
   }
 
@@ -74,11 +95,13 @@ export class AuthService {
   async generateToken({
     name,
     email,
+    role,
   }: {
     name: string;
     email: string;
+    role: string;
   }): Promise<string> {
-    const payload = { sub: email, username: name };
+    const payload = { sub: email, username: name, role: role };
 
     const token = await this.jwtService.signAsync(payload);
     return token;
