@@ -3,6 +3,7 @@ import { PrismaService } from 'src/common/prisma/prisma.service';
 import { CustomCacheService } from 'src/custom-cache/custom-cache.service';
 import { EventEmailQueueService } from 'src/queue/eventEmailQueue.service';
 import { CreateEventDto } from './dto/createEvent.dto';
+import { formateDate } from 'src/utils/helpers';
 
 @Injectable()
 export class EventService {
@@ -22,17 +23,7 @@ export class EventService {
 
     const attendees = await this.cacheService.getActiveAccounts();
 
-    const eventDate = new Date(data.date);
-
-    const formattedEventDate = new Intl.DateTimeFormat('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    }).format(eventDate);
+    const formattedEventDate = formateDate(data.date);
     for (const user of attendees) {
       await this.inviteEmailService.addJob({
         to: user.email,

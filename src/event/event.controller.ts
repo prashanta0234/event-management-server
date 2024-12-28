@@ -4,6 +4,7 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOperation,
+  ApiTags,
 } from '@nestjs/swagger';
 import { ApiResponseShape } from 'src/common/dto/apiResponse.dto';
 import { CreateEventDto } from './dto/createEvent.dto';
@@ -12,6 +13,7 @@ import { Roles } from 'src/auth/decoretor/roles.decoretor';
 import { Role } from 'src/utils/types';
 import { RolesGuard } from 'src/auth/guard/authGuard';
 
+@ApiTags('event')
 @Controller('event')
 export class EventController {
   constructor(private readonly eventService: EventService) {}

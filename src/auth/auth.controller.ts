@@ -8,7 +8,9 @@ import {
 import { LoginDto, RegisterAttendeeDto } from './dto';
 import { ApiResponseShape } from 'src/common/dto/apiResponse.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { SkipThrottle } from '@nestjs/throttler';
 
+@SkipThrottle()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -24,6 +26,7 @@ export class AuthController {
     return await this.authService.RegistrationAttendee(data);
   }
 
+  @SkipThrottle({ default: false })
   @Post('login')
   @ApiCreatedResponse({ type: ApiResponseShape })
   @ApiOperation({
@@ -35,6 +38,7 @@ export class AuthController {
     return await this.authService.LoginAttendee(data);
   }
 
+  @SkipThrottle({ default: false })
   @Post('admin/login')
   @ApiCreatedResponse({ type: ApiResponseShape })
   @ApiOperation({
@@ -44,6 +48,7 @@ export class AuthController {
     return await this.authService.adminLogin(data);
   }
 
+  @SkipThrottle({ default: false })
   @Post('active-account')
   @ApiBearerAuth()
   @ApiCreatedResponse({ type: ApiResponseShape })
@@ -52,7 +57,7 @@ export class AuthController {
   })
   @UseGuards(AuthGuard('jwt'))
   async activeAccount(@Query('token') token: string, @Req() req: any) {
-    const email = req.user.userId;
+    const email = req.user.email;
     return this.authService.validateOtp(email, token);
   }
 }

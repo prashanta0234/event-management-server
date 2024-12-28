@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { ConfirmEmailQueueService } from './confimEmailQueue.service';
 import { EventEmailQueueService } from './eventEmailQueue.service';
+import { ThanksEmailQueueService } from './thanksEmailQueue.service';
 
 @Global()
 @Module({
@@ -15,9 +16,18 @@ import { EventEmailQueueService } from './eventEmailQueue.service';
     BullModule.registerQueue(
       { name: 'confirmAccount' },
       { name: 'eventNotificationQueue' },
+      { name: 'thanksEmail' },
     ),
   ],
-  providers: [ConfirmEmailQueueService, EventEmailQueueService],
-  exports: [ConfirmEmailQueueService, EventEmailQueueService],
+  providers: [
+    ConfirmEmailQueueService,
+    EventEmailQueueService,
+    ThanksEmailQueueService,
+  ],
+  exports: [
+    ConfirmEmailQueueService,
+    EventEmailQueueService,
+    ThanksEmailQueueService,
+  ],
 })
 export class QueueModule {}

@@ -48,6 +48,29 @@ export class CustomCacheService {
     return data;
   }
 
+  async getEventById(id: string): Promise<EventEntity> {
+    const cachedData = await this.cache.get<EventEntity>(id);
+
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const data = await this.prisma.event.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    if (!data) {
+      return;
+    }
+    await this.cache.set(id, data);
+    return data;
+  }
+
+  async clearEventById(id: string): Promise<void> {
+    await this.cache.del(id);
+  }
+
   async clearEventByDate(date: Date): Promise<void> {
     await this.cache.del(date.toString());
   }

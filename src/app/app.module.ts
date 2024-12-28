@@ -11,6 +11,8 @@ import { GlobalExceptionFilter } from 'src/common/filter/globalException.filter'
 import { CustomCacheModule } from 'src/custom-cache/custom-cache.module';
 import { AttendeeModule } from 'src/attendee/attendee.module';
 import { EventModule } from 'src/event/event.module';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { RegistrationModule } from 'src/registration/registration.module';
 
 @Module({
   imports: [
@@ -25,6 +27,13 @@ import { EventModule } from 'src/event/event.module';
     CustomCacheModule,
     AttendeeModule,
     EventModule,
+    RegistrationModule,
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
   ],
   controllers: [AppController],
   providers: [
