@@ -10,6 +10,7 @@ import { QueueModule } from 'src/queue/queue.module';
 import { GlobalExceptionFilter } from 'src/common/filter/globalException.filter';
 import { CustomCacheModule } from 'src/custom-cache/custom-cache.module';
 import { AttendeeModule } from 'src/attendee/attendee.module';
+import { EventModule } from 'src/event/event.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AttendeeModule } from 'src/attendee/attendee.module';
     QueueModule,
     CustomCacheModule,
     AttendeeModule,
+    EventModule,
   ],
   controllers: [AppController],
   providers: [

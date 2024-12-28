@@ -11,9 +11,9 @@ model Event {
   id            String         @id @default(uuid()) @db.Uuid
   name          String
   description   String?
-  date          DateTime
+  date          DateTime       @unique
   location      String?
-  maxAttendees  Int
+  maxAttendees  Int            @default(0)
   createdAt     DateTime       @default(now()) @db.Timestamptz
   registrations Registration[]
 

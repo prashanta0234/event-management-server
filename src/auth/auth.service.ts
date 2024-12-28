@@ -9,6 +9,7 @@ import { LoginDto, RegisterAttendeeDto } from './dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfirmEmailQueueService } from 'src/queue/confimEmailQueue.service';
+import { CustomCacheService } from 'src/custom-cache/custom-cache.service';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private jwtService: JwtService,
     private confirmEmailService: ConfirmEmailQueueService,
+    private cacheService: CustomCacheService,
   ) {}
   async RegistrationAttendee(
     data: RegisterAttendeeDto,
@@ -97,7 +99,7 @@ export class AuthService {
     }
     const token = await this.generateToken({
       email: data.email,
-      role: 'USER',
+      role: 'ADMIN',
     });
     return { accessToken: token };
   }
@@ -145,6 +147,8 @@ export class AuthService {
         isActivate: true,
       },
     });
+
+    await this.cacheService.clearActiveAccountsCache();
 
     return 'Account activated. Please log in.';
   }

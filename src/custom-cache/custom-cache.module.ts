@@ -17,7 +17,7 @@ import { CustomCacheService } from './custom-cache.service';
 
         return {
           store: store as unknown as CacheStore,
-          ttl: 10 * 60000,
+          ttl: 5 * 60000,
         };
       },
     }),
