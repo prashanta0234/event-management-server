@@ -8,6 +8,8 @@ import { PrismaModule } from 'src/common/prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
 import { QueueModule } from 'src/queue/queue.module';
 import { GlobalExceptionFilter } from 'src/common/filter/globalException.filter';
+import { CustomCacheModule } from 'src/custom-cache/custom-cache.module';
+import { AttendeeModule } from 'src/attendee/attendee.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { GlobalExceptionFilter } from 'src/common/filter/globalException.filter'
       signOptions: { expiresIn: '10m' },
     }),
     QueueModule,
+    CustomCacheModule,
+    AttendeeModule,
   ],
   controllers: [AppController],
   providers: [

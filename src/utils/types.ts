@@ -7,3 +7,8 @@ export enum Role {
   User = 'user',
   Admin = 'admin',
 }
+
+export interface Attendee {
+  name: string;
+  email: string;
+}
