@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
-import { CustomCacheService } from 'src/custom-cache/custom-cache.service';
-import { EventEmailQueueService } from 'src/queue/eventEmailQueue.service';
+import { CustomCacheService } from 'src/common/custom-cache/custom-cache.service';
+import { EventEmailQueueService } from 'src/common/queue/eventEmailQueue.service';
 import { CreateEventDto } from './dto/createEvent.dto';
 import { formateDate } from 'src/utils/helpers';
 

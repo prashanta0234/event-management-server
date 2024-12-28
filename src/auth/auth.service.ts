@@ -8,8 +8,8 @@ import { LoginDto, RegisterAttendeeDto } from './dto';
 
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { ConfirmEmailQueueService } from 'src/queue/confimEmailQueue.service';
-import { CustomCacheService } from 'src/custom-cache/custom-cache.service';
+import { ConfirmEmailQueueService } from 'src/common/queue/confimEmailQueue.service';
+import { CustomCacheService } from 'src/common/custom-cache/custom-cache.service';
 
 @Injectable()
 export class AuthService {

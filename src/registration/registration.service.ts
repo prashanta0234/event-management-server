@@ -5,8 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
-import { CustomCacheService } from 'src/custom-cache/custom-cache.service';
-import { ThanksEmailQueueService } from 'src/queue/thanksEmailQueue.service';
+import { CustomCacheService } from 'src/common/custom-cache/custom-cache.service';
+import { ThanksEmailQueueService } from 'src/common/queue/thanksEmailQueue.service';
 import { formateDate } from 'src/utils/helpers';
 
 @Injectable()

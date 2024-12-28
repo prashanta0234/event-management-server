@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from 'src/common/prisma/prisma.service';
-import { ReminderEmailQueueService } from 'src/queue/reminderEmailQueue.service';
+import { ReminderEmailQueueService } from 'src/common/queue/reminderEmailQueue.service';
 
 @Injectable()
 export class SchedulerService {
