@@ -13,6 +13,7 @@ import { AttendeeModule } from 'src/attendee/attendee.module';
 import { EventModule } from 'src/event/event.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { RegistrationModule } from 'src/registration/registration.module';
+import { SchedulerModule } from 'src/scheduler/scheduler.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { RegistrationModule } from 'src/registration/registration.module';
     AttendeeModule,
     EventModule,
     RegistrationModule,
+    SchedulerModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
