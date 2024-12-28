@@ -4,6 +4,7 @@ import { CustomCacheService } from 'src/common/custom-cache/custom-cache.service
 import { EventEmailQueueService } from 'src/common/queue/eventEmailQueue.service';
 import { CreateEventDto } from './dto/createEvent.dto';
 import { formateDate } from 'src/utils/helpers';
+import { EventEntity } from './entity/eventEntity';
 
 @Injectable()
 export class EventService {
@@ -20,6 +21,7 @@ export class EventService {
     }
     await this.prisma.event.create({ data });
     await this.cacheService.clearEventByDate(data.date);
+    await this.cacheService.clearEvents();
 
     const attendees = await this.cacheService.getActiveAccounts();
 
@@ -33,5 +35,9 @@ export class EventService {
       });
     }
     return 'Event Created successfully';
+  }
+
+  async getEvents(): Promise<EventEntity[]> {
+    return await this.cacheService.getEvents();
   }
 }

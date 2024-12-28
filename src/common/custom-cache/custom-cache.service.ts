@@ -67,6 +67,24 @@ export class CustomCacheService {
     return data;
   }
 
+  async getEvents(): Promise<EventEntity[]> {
+    const key = 'allEvents';
+    const cachedData = await this.cache.get<EventEntity[]>(key);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const events = await this.prisma.event.findMany();
+
+    await this.cache.set(key, events);
+    return events;
+  }
+
+  async clearEvents(): Promise<void> {
+    const key = 'allEvents';
+    await this.cache.del(key);
+  }
+
   async clearEventById(id: string): Promise<void> {
     await this.cache.del(id);
   }

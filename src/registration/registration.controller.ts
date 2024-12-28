@@ -10,11 +10,11 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/guard/authGuard';
 import { Roles } from 'src/auth/decoretor/roles.decoretor';
 import { Role } from 'src/utils/types';
-import { ApiResponseShape } from 'src/common/dto/apiResponse.dto';
+import { ApiResponseRegistrationEvent } from 'src/common/dto/apiResponse.dto';
 import { RegisterEventDto } from './dto/registrationEvent.dto';
 
-@ApiTags('event')
-@Controller('event/registration')
+@ApiTags('events')
+@Controller('events/registration')
 export class RegistrationController {
   constructor(private readonly registrationService: RegistrationService) {}
 
@@ -22,7 +22,7 @@ export class RegistrationController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(Role.User)
-  @ApiCreatedResponse({ type: ApiResponseShape })
+  @ApiCreatedResponse({ type: ApiResponseRegistrationEvent })
   @ApiOperation({
     description: 'Event registration',
   })
