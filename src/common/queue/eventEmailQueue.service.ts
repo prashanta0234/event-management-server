@@ -104,7 +104,7 @@ export class EventEmailQueueService {
             
             <div class="event-info">
               <p><strong>Event Name:</strong> ${eventName}</p>
-              <p><strong>Event Date:</strong> ${new Date(eventDate).toLocaleString()}</p>
+              <p><strong>Event Date:</strong> ${eventDate}</p>
               <p><strong>Event Details:</strong> <a href="${eventLink}" target="_blank">Click here for more info</a></p>
             </div>
             

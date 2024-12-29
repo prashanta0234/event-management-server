@@ -117,7 +117,7 @@ export class ReminderEmailQueueService {
             
             <div class="event-info">
               <p><strong>Event Name:</strong> ${eventName}</p>
-              <p><strong>Event Date:</strong> ${new Date(eventDate).toLocaleString()}</p>
+              <p><strong>Event Date:</strong> ${eventDate}</p>
               <p><strong>Event Details:</strong> <a href="${eventLink}" target="_blank">Click here for more info</a></p>
             </div>
             
@@ -126,7 +126,7 @@ export class ReminderEmailQueueService {
             <a href="${eventLink}" class="button">View Event Details</a>
             
             <div class="footer">
-              <p>&copy; ${new Date().getFullYear()} Your Company Name. All rights reserved.</p>
+              <p>&copy; ${new Date().getFullYear()} Prashanta. All rights reserved.</p>
               <p>If you have any questions, feel free to <a href="mailto:support@company.com">contact us</a>.</p>
             </div>
           </div>
