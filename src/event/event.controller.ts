@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { EventService } from './event.service';
 import {
   ApiBearerAuth,
@@ -41,5 +41,14 @@ export class EventController {
   })
   async getEvents(): Promise<EventEntity[]> {
     return await this.eventService.getEvents();
+  }
+
+  @Get(':id')
+  @ApiCreatedResponse({ type: ApiResponseGetEvent })
+  @ApiOperation({
+    description: 'Get all Event',
+  })
+  async getEvent(@Param('id') id: string): Promise<EventEntity> {
+    return await this.eventService.getEvent(id);
   }
 }

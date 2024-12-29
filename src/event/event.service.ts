@@ -40,4 +40,7 @@ export class EventService {
   async getEvents(): Promise<EventEntity[]> {
     return await this.cacheService.getEvents();
   }
+  async getEvent(eventId: string): Promise<EventEntity> {
+    return await this.cacheService.getEventById(eventId);
+  }
 }
