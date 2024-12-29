@@ -10,14 +10,14 @@ import { CustomCacheService } from './custom-cache.service';
       useFactory: async () => {
         const store = await redisStore({
           socket: {
-            host: 'localhost',
-            port: 6379,
+            host: process.env.REDIS_HOST,
+            port: +process.env.REDIS_PORT,
           },
         });
 
         return {
           store: store as unknown as CacheStore,
-          ttl: 5 * 60000,
+          ttl: +process.env.REDIS_TTL,
         };
       },
     }),

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { CustomCacheService } from 'src/common/custom-cache/custom-cache.service';
-import { Attendee } from 'src/utils/types';
+import { AttendeeDto } from './dto/attendee.dto';
 
 @Injectable()
 export class AttendeeService {
@@ -10,8 +10,13 @@ export class AttendeeService {
     private readonly cacheService: CustomCacheService,
   ) {}
 
-  async getAllActiveAttendee(): Promise<Attendee[]> {
+  async getAllActiveAttendee(): Promise<AttendeeDto[]> {
     const data = await this.cacheService.getActiveAccounts();
+    return data;
+  }
+
+  async getAttendeeById(id: string): Promise<AttendeeDto> {
+    const data = await this.cacheService.getAttendeeById(id);
     return data;
   }
 }

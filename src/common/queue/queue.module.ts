@@ -8,12 +8,6 @@ import { ReminderEmailQueueService } from './reminderEmailQueue.service';
 @Global()
 @Module({
   imports: [
-    BullModule.forRoot({
-      connection: {
-        host: 'localhost',
-        port: 6379,
-      },
-    }),
     BullModule.registerQueue(
       { name: 'confirmAccount' },
       { name: 'eventNotificationQueue' },

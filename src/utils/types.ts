@@ -8,11 +8,6 @@ export enum Role {
   Admin = 'ADMIN',
 }
 
-export interface Attendee {
-  name: string;
-  email: string;
-}
-
 export interface createEvent {
   name: string;
   description?: string;

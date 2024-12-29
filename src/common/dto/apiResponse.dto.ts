@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { AttendeeDto } from 'src/attendee/dto/attendee.dto';
 import { EventEntity } from 'src/event/entity/eventEntity';
 
 export class ApiResponseShape {
@@ -29,7 +30,7 @@ export class ApiResponseCreateEvent {
   data: string;
 }
 
-export class ApiResponseGetEvent {
+export class ApiResponseGetEvents {
   @ApiProperty({
     example: true,
     description: 'Indicates if the API call was successful.',
@@ -49,6 +50,26 @@ export class ApiResponseGetEvent {
   data: EventEntity[];
 }
 
+export class ApiResponseGetEvent {
+  @ApiProperty({
+    example: true,
+    description: 'Indicates if the API call was successful.',
+  })
+  ok: boolean;
+
+  @ApiProperty({
+    example: 200,
+    description: 'The HTTP status code of the response.',
+  })
+  statusCode: number;
+
+  @ApiProperty({
+    type: EventEntity,
+    description: 'An array of events retrieved from the database.',
+  })
+  data: EventEntity;
+}
+
 export class ApiResponseRegistrationEvent {
   @ApiProperty({ example: true })
   ok: boolean;
@@ -60,4 +81,44 @@ export class ApiResponseRegistrationEvent {
     example: 'Event Registration successfully',
   })
   data: string;
+}
+
+export class ApiResponseAttendees {
+  @ApiProperty({
+    example: true,
+    description: 'Indicates if the API call was successful.',
+  })
+  ok: boolean;
+
+  @ApiProperty({
+    example: 200,
+    description: 'The HTTP status code of the response.',
+  })
+  statusCode: number;
+
+  @ApiProperty({
+    type: AttendeeDto,
+    description: 'An array of attendees from the database.',
+  })
+  data: AttendeeDto;
+}
+
+export class ApiResponseAttendee {
+  @ApiProperty({
+    example: true,
+    description: 'Indicates if the API call was successful.',
+  })
+  ok: boolean;
+
+  @ApiProperty({
+    example: 200,
+    description: 'The HTTP status code of the response.',
+  })
+  statusCode: number;
+
+  @ApiProperty({
+    type: AttendeeDto,
+    description: 'An array of attendees from the database.',
+  })
+  data: AttendeeDto;
 }

@@ -1,8 +1,8 @@
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
+import { AttendeeDto } from 'src/attendee/dto/attendee.dto';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { EventEntity } from 'src/event/entity/eventEntity';
-import { Attendee } from 'src/utils/types';
 
 @Injectable()
 export class CustomCacheService {
@@ -12,8 +12,10 @@ export class CustomCacheService {
     @Inject(CACHE_MANAGER) private cache: Cache,
   ) {}
 
-  async getActiveAccounts(): Promise<Attendee[]> {
-    const cachedData = await this.cache.get<Attendee[]>(this.attendeeCacheKey);
+  async getActiveAccounts(): Promise<AttendeeDto[]> {
+    const cachedData = await this.cache.get<AttendeeDto[]>(
+      this.attendeeCacheKey,
+    );
     if (cachedData) {
       return cachedData;
     }
@@ -95,5 +97,23 @@ export class CustomCacheService {
 
   async clearActiveAccountsCache(): Promise<void> {
     await this.cache.del(this.attendeeCacheKey);
+  }
+  async getAttendeeById(id: string): Promise<AttendeeDto> {
+    const cachedData = await this.cache.get<AttendeeDto>(id);
+
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const data = await this.prisma.attendee.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    if (!data) {
+      return;
+    }
+    await this.cache.set(id, data);
+    return data;
   }
 }

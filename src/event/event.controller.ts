@@ -9,6 +9,7 @@ import {
 import {
   ApiResponseCreateEvent,
   ApiResponseGetEvent,
+  ApiResponseGetEvents,
 } from 'src/common/dto/apiResponse.dto';
 import { CreateEventDto } from './dto/createEvent.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -35,7 +36,7 @@ export class EventController {
   }
 
   @Get()
-  @ApiCreatedResponse({ type: ApiResponseGetEvent })
+  @ApiCreatedResponse({ type: ApiResponseGetEvents })
   @ApiOperation({
     description: 'Get all Event',
   })
