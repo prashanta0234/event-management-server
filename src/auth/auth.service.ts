@@ -148,7 +148,7 @@ export class AuthService {
       },
     });
 
-    await this.cacheService.clearActiveAccountsCache();
+    await this.cacheService.remove('attendees');
 
     return 'Account activated. Please log in.';
   }

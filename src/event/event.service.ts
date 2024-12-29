@@ -15,13 +15,13 @@ export class EventService {
   ) {}
 
   async createEvent(data: CreateEventDto): Promise<string> {
-    const isExists = await this.cacheService.getEventByDate(data.date);
+    const isExists = await this.getEventByDate(data.date.toISOString());
     if (isExists) {
       throw new BadRequestException('Already have an event in given day');
     }
     await this.prisma.event.create({ data });
-    await this.cacheService.clearEventByDate(data.date);
-    await this.cacheService.clearEvents();
+    await this.cacheService.remove(data.date.toISOString());
+    await this.cacheService.remove('events');
 
     const attendees = await this.cacheService.getActiveAccounts();
 
@@ -37,10 +37,55 @@ export class EventService {
     return 'Event Created successfully';
   }
 
+  async getEventByDate(date: string): Promise<EventEntity> {
+    const key = date.toString();
+
+    const cachedData = await this.cacheService.get<EventEntity>(key);
+
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const data = await this.prisma.event.findUnique({
+      where: {
+        date: date,
+      },
+    });
+    if (!data) {
+      return;
+    }
+    await this.cacheService.set(key, data);
+    return data;
+  }
+
   async getEvents(): Promise<EventEntity[]> {
-    return await this.cacheService.getEvents();
+    const key = 'events';
+    const cachedData = await this.cacheService.get<EventEntity[]>(key);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const events = await this.prisma.event.findMany();
+
+    await this.cacheService.set(key, events);
+    return events;
   }
   async getEvent(eventId: string): Promise<EventEntity> {
-    return await this.cacheService.getEventById(eventId);
+    const cachedData = await this.cacheService.get<EventEntity>(eventId);
+
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const data = await this.prisma.event.findUnique({
+      where: {
+        id: eventId,
+      },
+    });
+    if (!data) {
+      return;
+    }
+    await this.cacheService.set(eventId, data);
+    return data;
   }
 }

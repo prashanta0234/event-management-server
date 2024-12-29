@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { ReminderEmailQueueService } from 'src/common/queue/reminderEmailQueue.service';
+import { formateDate } from 'src/utils/helpers';
 
 @Injectable()
 export class SchedulerService {
@@ -10,20 +11,19 @@ export class SchedulerService {
     private readonly prisma: PrismaService,
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_1AM)
+  @Cron(CronExpression.EVERY_MINUTE)
   async handleCron() {
-    const tomorrowStart = new Date();
-    tomorrowStart.setUTCDate(tomorrowStart.getUTCDate() + 1);
-    tomorrowStart.setUTCHours(0, 0, 0, 0);
+    const now = new Date();
+    const twentyFourHoursFromNow = new Date(now);
+    twentyFourHoursFromNow.setHours(now.getHours() + 24);
 
-    const tomorrowEnd = new Date(tomorrowStart);
-    tomorrowEnd.setUTCHours(23, 59, 59, 999);
+    twentyFourHoursFromNow.setSeconds(0, 0);
 
     const events = await this.prisma.event.findMany({
       where: {
         date: {
-          gte: tomorrowStart.toISOString(),
-          lte: tomorrowEnd.toISOString(),
+          gte: twentyFourHoursFromNow.toISOString(),
+          lte: new Date(twentyFourHoursFromNow.getTime() + 60000).toISOString(),
         },
       },
       include: {
@@ -41,7 +41,7 @@ export class SchedulerService {
         await this.reminderEmail.addJob({
           to: attendeeEmail,
           eventName: event.name,
-          eventDate: event.date.toISOString(),
+          eventDate: formateDate(event.date),
           eventLink: `https://meet.google.com/landing`,
         });
       }

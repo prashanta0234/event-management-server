@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { CacheModule, CacheStore } from '@nestjs/cache-manager';
-import { redisStore } from 'cache-manager-redis-store';
 import { CustomCacheService } from './custom-cache.service';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Global()
 @Module({
@@ -13,11 +13,11 @@ import { CustomCacheService } from './custom-cache.service';
             host: process.env.REDIS_HOST,
             port: +process.env.REDIS_PORT,
           },
+          ttl: +process.env.REDIS_TTL,
         });
 
         return {
           store: store as unknown as CacheStore,
-          ttl: +process.env.REDIS_TTL,
         };
       },
     }),

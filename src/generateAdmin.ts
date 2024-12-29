@@ -10,7 +10,7 @@ async function generateAdmin() {
       name: 'Admin User',
       email: 'admin@example.com',
       password: 'admin123',
-      role: 'admin',
+      role: 'ADMIN',
     };
 
     const hashedPassword = await bcrypt.hash(adminDetails.password, 10);

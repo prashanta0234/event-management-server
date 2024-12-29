@@ -6,16 +6,26 @@ import { EventEntity } from 'src/event/entity/eventEntity';
 
 @Injectable()
 export class CustomCacheService {
-  private readonly attendeeCacheKey = 'active_attendee';
   constructor(
     private readonly prisma: PrismaService,
     @Inject(CACHE_MANAGER) private cache: Cache,
   ) {}
 
+  async set<T>(key: string, value: T, ttl?: number) {
+    await this.cache.set(key, value as T, ttl ?? +process.env.REDIS_TTL);
+  }
+
+  async get<T>(key: string): Promise<T> {
+    const value = await this.cache.get(key);
+    return value as T;
+  }
+
+  async remove(key: string) {
+    await this.cache.del(key);
+  }
+
   async getActiveAccounts(): Promise<AttendeeDto[]> {
-    const cachedData = await this.cache.get<AttendeeDto[]>(
-      this.attendeeCacheKey,
-    );
+    const cachedData = await this.cache.get<AttendeeDto[]>('attendees');
     if (cachedData) {
       return cachedData;
     }
@@ -25,29 +35,8 @@ export class CustomCacheService {
       select: { name: true, email: true },
     });
 
-    await this.cache.set(this.attendeeCacheKey, activeAccounts);
+    await this.cache.set('attendees', activeAccounts);
     return activeAccounts;
-  }
-
-  async getEventByDate(date: Date): Promise<EventEntity> {
-    const key = date.toString();
-
-    const cachedData = await this.cache.get<EventEntity>(key);
-
-    if (cachedData) {
-      return cachedData;
-    }
-
-    const data = await this.prisma.event.findUnique({
-      where: {
-        date: date,
-      },
-    });
-    if (!data) {
-      return;
-    }
-    await this.cache.set(key, data);
-    return data;
   }
 
   async getEventById(id: string): Promise<EventEntity> {
@@ -58,54 +47,6 @@ export class CustomCacheService {
     }
 
     const data = await this.prisma.event.findUnique({
-      where: {
-        id: id,
-      },
-    });
-    if (!data) {
-      return;
-    }
-    await this.cache.set(id, data);
-    return data;
-  }
-
-  async getEvents(): Promise<EventEntity[]> {
-    const key = 'allEvents';
-    const cachedData = await this.cache.get<EventEntity[]>(key);
-    if (cachedData) {
-      return cachedData;
-    }
-
-    const events = await this.prisma.event.findMany();
-
-    await this.cache.set(key, events);
-    return events;
-  }
-
-  async clearEvents(): Promise<void> {
-    const key = 'allEvents';
-    await this.cache.del(key);
-  }
-
-  async clearEventById(id: string): Promise<void> {
-    await this.cache.del(id);
-  }
-
-  async clearEventByDate(date: Date): Promise<void> {
-    await this.cache.del(date.toString());
-  }
-
-  async clearActiveAccountsCache(): Promise<void> {
-    await this.cache.del(this.attendeeCacheKey);
-  }
-  async getAttendeeById(id: string): Promise<AttendeeDto> {
-    const cachedData = await this.cache.get<AttendeeDto>(id);
-
-    if (cachedData) {
-      return cachedData;
-    }
-
-    const data = await this.prisma.attendee.findUnique({
       where: {
         id: id,
       },

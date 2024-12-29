@@ -11,12 +11,36 @@ export class AttendeeService {
   ) {}
 
   async getAllActiveAttendee(): Promise<AttendeeDto[]> {
-    const data = await this.cacheService.getActiveAccounts();
-    return data;
+    const cachedData = await this.cacheService.get<AttendeeDto[]>('attendees');
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const activeAccounts = await this.prisma.attendee.findMany({
+      where: { isActivate: true },
+      select: { name: true, email: true },
+    });
+
+    await this.cacheService.set('attendees', activeAccounts);
+    return activeAccounts;
   }
 
   async getAttendeeById(id: string): Promise<AttendeeDto> {
-    const data = await this.cacheService.getAttendeeById(id);
+    const cachedData = await this.cacheService.get<AttendeeDto>(id);
+
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const data = await this.prisma.attendee.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    if (!data) {
+      return;
+    }
+    await this.cacheService.set(id, data);
     return data;
   }
 }
